@@ -5,3 +5,4 @@ pymongo
 python-dotenv
 gunicorn
 dnspython
+flask_cors

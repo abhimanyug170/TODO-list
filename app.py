@@ -4,7 +4,7 @@ from pymongo import MongoClient
 # import dns
 
 # to handle CORS error
-# from flask_cors import CORS
+from flask_cors import CORS
 
 # handle .env
 # from dotenv import load_dotenv
@@ -13,7 +13,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 app = Flask(__name__)
-# CORS(app)
+CORS(app)
 api = Api(app)
 
 client = MongoClient("mongodb+srv://user1:karbonna50@cluster0.vgjcl.mongodb.net/CardsDB?retryWrites=true&w=majority")
