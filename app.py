@@ -21,58 +21,6 @@ client = MongoClient("mongodb://localhost:27017")
 db = client["CardDB"]
 cards = db["cards"]
 
-# ODM model for card-view
-# Doubly link-list to store cards's relative ordering
-# class Card(Model):
-
-#     @classmethod
-#     def db(cls):
-#         return MongoClient["cardsDB"]
-    
-#     __schema__ = DictField(dict(
-#         # _id = ObjectIDField(required=True),
-#         next_id = ObjectIDField(default=None),
-#         prev_id = ObjectIDField(required=True),
-#         is_head = BooleanField(default=False),
-#         title = StringField(required=True, max_length=100),
-#         content = StringField(max_length=500)
-#     ))
-
-
-# # RESTful Api classes
-# class AllCards(Api):
-
-#     # Create
-#     # body params: last card's "_id"
-#     def post(self):
-#         posted_data = request.get_json()
-#         last_id = posted_data["last_id"]
-#         # empty list
-#         if(last_id == None):
-#             card = Card.insert_one({
-#                 # "_id" = ,
-#                 "prev_id": None,
-#                 "is_head": True,
-#                 "title": posted_data["title"],
-#                 "content": posted_data["content"]
-#             })
-#         else:
-#             card = Card.insert_one({
-#                 "prev_id": last_id,
-#                 "title": posted_data["title"],
-#                 "content": posted_data["content"]
-#             })
-#             prev_card = Card.find_one(last_id)
-        
-#         id = card.inserted_id
-#         return jsonify({
-#             "_id": id,
-#             "prev_id": last_id,
-#             "status": 200
-#         })
-    
-#     # Read
-
 
 class AllCards(Resource):
 
