@@ -4,3 +4,4 @@ bson
 pymongo
 python-dotenv
 gunicorn
+dnspython
