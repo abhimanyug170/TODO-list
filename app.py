@@ -75,7 +75,7 @@ class AllCards(Resource):
             )
         
         return jsonify({
-            "_id": str(result["_id"]),
+            "_id": str(result.inserted_id),
             "status": 200,
             "msg": "item added successfully"
         })
