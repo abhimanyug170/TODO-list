@@ -1,7 +1,7 @@
 flask
 flask_restful
+bson
 pymongo
 python-dotenv
-bson
 Werkzeug
 gunicorn
