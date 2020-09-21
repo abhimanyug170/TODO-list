@@ -20,58 +20,62 @@ client = MongoClient("mongodb+srv://user1:karbonna50@cluster0.vgjcl.mongodb.net/
 db = client["CardDB"]
 cards = db["cards"]
 
+# !!!!!!!
+# get -> find_one -> ObjectId(next) but its originally objectid type
+
+
+
+# task
+# pending, completed
+# is_pending True (in db)
+# new endpoint to mark complete
+# /mark-complete/<id>
 
 class AllCards(Resource):
 
     # Create
+    # (title, content)
+    # iterate ll and find last
+
+    # edit
+    # patch request
+    # query paran -> /<id>
+    # body -> (new title, desc) any one which is present
+
     def post(self):
         # body params: array of cards "cards"
         posted_data = request.get_json()
-        card_list = posted_data["card_list"]
         
-        # empty list
-        if(not card_list):
-            _id = cards.insert_one({
+        # find last element 
+        tail = cards.find_one({"next_id": None})
+
+        # empty card list
+        if(not tail):
+            result = cards.insert_one({
                 "prev_id": None,
                 "next_id": None,
                 "is_head": True,
                 "title": posted_data["title"],
-                "content": posted_data["content"]
-            })
-            # append last element to array
-            card_list.append({
-                "_id": str(_id.inserted_id),
-                "prev_id": None,
-                "next_id": None,
-                "is_head": True,
-                "title": posted_data["title"],
-                "content": posted_data["content"]
+                "content": posted_data["content"],
+                "is_pending": True
             })
         else:
-            _id = cards.insert_one({
-                "prev_id": str(card_list[-1]["_id"]),
+            result = cards.insert_one({
+                "prev_id": tail["_id"],
                 "next_id": None,
                 "is_head": False,
                 "title": posted_data["title"],
-                "content": posted_data["content"]
+                "content": posted_data["content"],
+                "is_pending": True
             })
             # make changes in last element in DB
-            cards.update_one({"_id": ObjectId(card_list[-1]["_id"])}, 
-                             {"$set": {"next_id": _id.inserted_id}})
-
-            # modify the array
-            card_list[-1]["next_id"] = str(_id.inserted_id)
-            card_list.append({
-                "_id": str(_id.inserted_id),
-                "prev_id": str(card_list[-1]["_id"]),
-                "next_id": None,
-                "is_head": False,
-                "title": posted_data["title"],
-                "content": posted_data["content"]
-            })
+            cards.update_one(
+                {"_id": tail["_id"]}, 
+                {"$set": {"next_id": result.inserted_id}}
+            )
         
         return jsonify({
-            "card_list": card_list,
+            "_id": str(result["_id"]),
             "status": 200,
             "msg": "item added successfully"
         })
@@ -97,6 +101,7 @@ class AllCards(Resource):
                 "is_head": cursor["is_head"],
                 "title": cursor["title"],
                 "content": cursor["content"],
+                "is_pending": cursor["is_pending"]
             })
 
             if(not cursor["next_id"]):
@@ -227,10 +232,15 @@ class AllCards(Resource):
         })
 
 
+
+class CurCard(Resource):
+
+    # def patch(self, card_id):
+
+
     # delete a card
-    def delete(self):
-        posted_data = request.get_json()
-        card_id = posted_data["card_id"]
+    # /<id>
+    def delete(self, card_id):
         if(not card_id):
             return jsonify({
                 "status": "404",
@@ -273,7 +283,22 @@ class AllCards(Resource):
         })
 
 
+class MarkComplete(Resource):
+
+    def patch(self, card_id):
+        cards.update_one(
+            {"_id": ObjectId(card_id)},
+            {"$set": {"is_pending": False}}
+        )
+
+        return jsonify({
+            "status": 200
+        })
+
+
 api.add_resource(AllCards, "/")
+api.add_resource(CurCard, "/<card_id>")
+api.add_resource(MarkComplete, "/mark-complete/<card_id>")
 
 if __name__ == "__main__":
     app.run(port = 5000)
