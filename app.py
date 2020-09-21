@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_restful import Resource, Api
 from pymongo import MongoClient
-# from pymongoext import Model, ObjectIDField, BooleanField, StringField, DictField
 
 # to handle CORS error
 from flask_cors import CORS
@@ -9,8 +8,7 @@ from flask_cors import CORS
 # handle .env
 from dotenv import load_dotenv
 
-# handle json
-import json
+# handle "_id" field from string
 from bson.objectid import ObjectId
 
 app = Flask(__name__)
