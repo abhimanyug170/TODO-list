@@ -107,7 +107,7 @@ class AllCards(Resource):
             if(not cursor["next_id"]):
                 break
             # move to next
-            cursor = cards.find_one({"_id": ObjectId(cursor["next_id"])})
+            cursor = cards.find_one({"_id": cursor["next_id"]})
 
         return jsonify({
             "card_list": card_list,
@@ -235,8 +235,23 @@ class AllCards(Resource):
 
 class CurCard(Resource):
 
-    # def patch(self, card_id):
-
+    # Update card-details
+    def patch(self, card_id):
+        posted_data = request.get_json()
+        if("title" in posted_data):
+            cards.update_one(
+                {"_id": ObjectId(card_id)},
+                {"$set": {"title": posted_data["title"]}}
+            )
+        if("content" in posted_data):
+            cards.update_one(
+                {"_id": ObjectId(card_id)},
+                {"$set": {"content": posted_data["content"]}}
+            )
+        
+        return jsonify({
+            "status": 200
+        })
 
     # delete a card
     # /<id>
@@ -275,7 +290,7 @@ class CurCard(Resource):
             cards.update_one({"_id": card["next_id"]}, 
                              {"$set": {"prev_id": card["prev_id"]}})
 
-        cards.delete_one({"_id": ObjectId(card_id)})
+        cards.delete_one({"_id": card["_id"]})
 
         return jsonify({
             "status": 200,
