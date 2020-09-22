@@ -7,16 +7,19 @@ from pymongo import MongoClient
 from flask_cors import CORS
 
 # handle .env
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
+import os
 
 # handle "_id" field from string
 from bson.objectid import ObjectId
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
 
-client = MongoClient("mongodb+srv://user1:karbonna50@cluster0.vgjcl.mongodb.net/CardsDB?retryWrites=true&w=majority")
+client = MongoClient(os.environ["MONGODB_URI"])
 db = client["CardDB"]
 cards = db["cards"]
 
