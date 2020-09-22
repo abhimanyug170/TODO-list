@@ -13,7 +13,7 @@ import os
 # handle "_id" field from string
 from bson.objectid import ObjectId
 
-load_dotenv()
+# load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
